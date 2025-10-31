@@ -1,0 +1,31 @@
+name: clase_2108
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_fonts: ^5.0.0
+  carousel_slider: ^5.0.0
+  http: ^1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  fonts:
+    - family: Bytesized
+      fonts:
+        - asset: assets/fonts/bytesized/Bytesized-Regular.ttf
+  
+  assets:
+    - data/my_list_json.json
+    - assets/images/

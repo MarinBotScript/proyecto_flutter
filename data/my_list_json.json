@@ -1,0 +1,35 @@
+{
+    "name_my_list_json": "Flutter Json",
+    "rutas": [
+        {
+            "ruta":"access_page",
+            "icono":"assessment_outline",
+            "informacion": "Esta es mi Pagina de acceso"
+        },
+        {
+            "ruta":"pagina_uno",
+            "icono":"assessment_outline",
+            "informacion": "Esta es mi pag.1"
+        },
+        {
+            "ruta":"pagina_dos",
+            "icono":"assigment",
+            "informacion": "Esta es mi pag.2"
+        },
+        {
+            "ruta":"projects_page",
+            "icono":"card_giftcard",
+            "informacion": "Esta es mi pag. Proyectos"
+        },
+        {
+            "ruta":"project_details_3",
+            "icono":"assessment_outline",
+            "informacion": "Esta es mi pagina de detalles"
+        },
+        {
+            "ruta":"pagina_tres",
+            "icono":"new_releases",
+            "informacion": "Esta es mi pag.3"
+        }
+    ]
+}
