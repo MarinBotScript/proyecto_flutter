@@ -22,102 +22,91 @@ class Project {
     required this.uuid,
   });
 
-  /// Constructor para datos locales (mantiene compatibilidad con código existente)
-  factory Project.fromMap(Map<String, String> m) => Project(
-        titulo: m['titulo'] ?? '',
-        descripcion: m['descripcion'] ?? '',
-        ubicacion: m['ubicacion'] ?? '',
-        personas: m['personas'] ?? '',
-        fechas: m['fechas'] ?? '',
-        estado: m['estado'] ?? '',
-        imagen: m['imagen'] ?? '',
-        rutaDestino: m['rutaDestino'] ?? '',
-        uuid: m['uuid'] ?? '',
+  /// Constructor para datos locales (acepta valores dinámicos)
+  factory Project.fromMap(Map<String, dynamic> m) => Project(
+        titulo: (m['titulo'] ?? m['title'] ?? 'No especifica').toString(),
+        descripcion: (m['descripcion'] ?? m['description'] ?? 'No especifica').toString(),
+        ubicacion: (m['ubicacion'] ?? 'No especifica').toString(),
+        personas: (m['personas'] ?? 'No especifica').toString(),
+        fechas: (m['fechas'] ?? 'No especifica - No especifica').toString(),
+        estado: (m['estado'] ?? 'No especifica').toString(),
+        imagen: (m['imagen'] ?? 'assets/images/proyectos.jpg').toString(),
+        rutaDestino: (m['rutaDestino'] ?? 'project_details').toString(),
+        uuid: (m['uuid'] ?? m['id'] ?? '').toString(),
       );
 
-  /// Constructor para datos de la API
+  /// Constructor robusto para datos de la API
   factory Project.fromJson(Map<String, dynamic> json) {
-    // Procesar título
-    String titulo = 'No especifica';
-    if (json['name'] != null && json['name'].toString().trim().isNotEmpty) {
-      titulo = json['name'];
+    String getString(dynamic v, [String defaultValue = 'No especifica']) {
+      if (v == null) return defaultValue;
+      final s = v.toString().trim();
+      return s.isEmpty ? defaultValue : s;
     }
 
-    // Procesar descripción
-    String descripcion = 'No especifica';
-    if (json['description'] != null && json['description'].toString().trim().isNotEmpty) {
-      descripcion = json['description'];
-    }
+    // Título y descripción
+    final titulo = getString(json['name'], 'No especifica');
+    final descripcion = getString(json['description'], 'No especifica');
 
-    // Procesar ubicación
+    // Ubicación: intenta localidad (city + state) o fallbacks
     String ubicacion = 'No especifica, No especifica';
-    if (json['locality'] != null) {
-      final locality = json['locality'];
-      final city = locality['city'];
-      final state = locality['state'];
-      
-      String cityText = 'No especifica';
-      String stateText = 'No especifica';
-      
-      if (city != null && city.toString().trim().isNotEmpty) {
-        cityText = city;
+    final locality = json['locality'];
+    if (locality != null && locality is Map) {
+      final city = getString(locality['city'], 'No especifica');
+      final state = getString(locality['state'], 'No especifica');
+      ubicacion = '$city, $state';
+    } else {
+      // posibles claves alternativas
+      final city = json['city'] ?? json['locality_city'];
+      final state = json['state'] ?? json['locality_state'];
+      if (city != null || state != null) {
+        ubicacion = '${getString(city)} , ${getString(state)}';
       }
-      if (state != null && state.toString().trim().isNotEmpty) {
-        stateText = state;
-      }
-      
-      ubicacion = '$cityText, $stateText';
     }
 
-    // Procesar fechas
+    // Fechas: soporta varias claves y formatos defensivamente
     String fechas = 'No especifica - No especifica';
-    if (json['startDate'] != null && json['endDate'] != null) {
-      try {
-        final startDate = DateTime.parse(json['startDate']);
-        final endDate = DateTime.parse(json['endDate']);
-        final start = startDate.toString().split(' ')[0];
-        final end = endDate.toString().split(' ')[0];
-        fechas = '$start - $end';
-      } catch (e) {
-        fechas = 'No especifica - No especifica';
+    try {
+      final sdRaw = json['startDate'] ?? json['start_date'] ?? json['start'];
+      final edRaw = json['endDate'] ?? json['end_date'] ?? json['end'];
+      String startText = 'No especifica';
+      String endText = 'No especifica';
+      if (sdRaw != null) {
+        final sd = DateTime.parse(sdRaw.toString());
+        startText = sd.toIso8601String().split('T')[0];
       }
-    } else if (json['startDate'] != null) {
-      try {
-        final start = DateTime.parse(json['startDate']).toString().split(' ')[0];
-        fechas = '$start - No especifica';
-      } catch (e) {
-        fechas = 'No especifica - No especifica';
+      if (edRaw != null) {
+        final ed = DateTime.parse(edRaw.toString());
+        endText = ed.toIso8601String().split('T')[0];
       }
-    } else if (json['endDate'] != null) {
-      try {
-        final end = DateTime.parse(json['endDate']).toString().split(' ')[0];
-        fechas = 'No especifica - $end';
-      } catch (e) {
-        fechas = 'No especifica - No especifica';
-      }
+      fechas = '$startText - $endText';
+    } catch (_) {
+      // deja el valor por defecto si el parseo falla
     }
 
-    // Procesar número de personas (líder + equipo)
-    String personas = '0';
+    // Personas: cuenta líder + equipo si existen (muy defensivo)
     int numPersonas = 0;
-    
-    // Contar líder
-    if (json['leader'] != null && json['leader']['uuid'] != null) {
-      numPersonas = 1;
+    final leader = json['leader'];
+    if (leader != null && (leader is Map ? (leader['uuid'] ?? leader['id']) != null : true)) {
+      numPersonas += 1;
     }
-    
-    // Contar equipo
-    if (json['team'] != null && json['team'] is List) {
-      numPersonas += (json['team'] as List).length;
+    final team = json['team'];
+    if (team is List) {
+      numPersonas += team.length;
     }
-    
-    personas = numPersonas > 0 ? numPersonas.toString() : 'No especifica';
+    final personas = numPersonas > 0 ? numPersonas.toString() : 'No especifica';
 
-    // Procesar estado
-    String estado = 'No especifica';
-    if (json['status'] != null && json['status'].toString().trim().isNotEmpty) {
-      estado = json['status'];
-    }
+    // Estado
+    final estado = getString(json['status'], 'No especifica');
+
+    // Imagen por defecto (puedes sobrescribir desde la API si provee uno)
+    final imagen = getString(json['image'] ?? json['imagen'] ?? 'assets/images/proyectos.jpg', 'assets/images/proyectos.jpg');
+
+    // rutaDestino: permitir que la API lo indique o usar la ruta común por defecto
+    final rutaDestino = getString(json['rutaDestino'] ?? json['route'] ?? 'project_details', 'project_details');
+
+    // uuid: soporta varias claves (uuid, id, project_id)
+    final rawUuid = json['uuid'] ?? json['id'] ?? json['project_id'] ?? '';
+    final uuid = rawUuid != null ? rawUuid.toString() : '';
 
     return Project(
       titulo: titulo,
@@ -126,13 +115,12 @@ class Project {
       personas: personas,
       fechas: fechas,
       estado: estado,
-      imagen: 'assets/images/Proyectos.jpg', // imagen por defecto
-      rutaDestino: 'project_details', // ruta por defecto
-      uuid: json['uuid'] ?? '',
+      imagen: imagen,
+      rutaDestino: rutaDestino,
+      uuid: uuid,
     );
   }
 
-  /// Convierte el proyecto a un mapa (útil para debug o storage local)
   Map<String, dynamic> toJson() => {
         'titulo': titulo,
         'descripcion': descripcion,
@@ -144,4 +132,7 @@ class Project {
         'rutaDestino': rutaDestino,
         'uuid': uuid,
       };
+
+  @override
+  String toString() => 'Project(uuid: $uuid, titulo: $titulo, ruta: $rutaDestino)';
 }
