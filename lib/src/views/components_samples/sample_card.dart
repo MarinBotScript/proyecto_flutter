@@ -13,13 +13,13 @@ class SampleCard extends StatelessWidget {
   final String createdAt;
   final String updatedAt;
   final String collectedBy;
-  final String detail;
-  final String fixedRadius;
-  final String censusPeriod;
-  final String detection;
-  final String frequency;
-  final String height;
-  final String observations;
+  final String date;
+  final String temperature;
+  final String humidity;
+  final String precipitation;
+  final String cloudCover;
+  final String luminosity;
+  final String generalConditions;
   final int speciesCount;
   final VoidCallback onViewSpecies;
 
@@ -29,13 +29,13 @@ class SampleCard extends StatelessWidget {
     required this.createdAt,
     required this.updatedAt,
     required this.collectedBy,
-    required this.detail,
-    required this.fixedRadius,
-    required this.censusPeriod,
-    required this.detection,
-    required this.frequency,
-    required this.height,
-    required this.observations,
+    required this.date,
+    required this.temperature,
+    required this.humidity,
+    required this.precipitation,
+    required this.cloudCover,
+    required this.luminosity,
+    required this.generalConditions,
     required this.speciesCount,
     required this.onViewSpecies,
   });
@@ -46,7 +46,8 @@ class SampleCard extends StatelessWidget {
   static const _greenDark = Color(0xFF254D35);
   static const _blueLight = Color.fromRGBO(66, 120, 128, 0.15);
   static const _blueBorder = Color(0xFF427880);
-  static const _grayText = Color(0xFF656565);
+  static const _cyanLight = Color.fromRGBO(125, 191, 207, 0.10);
+  static const _cyanBorder = Color(0xFF7DBFCF);
 
   @override
   Widget build(BuildContext context) {
@@ -73,8 +74,6 @@ class SampleCard extends StatelessWidget {
                 _buildSpecificationsTitle(),
                 const SizedBox(height: 10),
                 _buildSpecifications(),
-                const SizedBox(height: 10),
-                _buildObservations(),
                 const SizedBox(height: 10),
                 _buildSpeciesButton(),
                 const CustomDivider(height: 20),
@@ -160,14 +159,14 @@ class SampleCard extends StatelessWidget {
   Widget _buildSpecifications() {
     return Column(
       children: [
-        // Primera fila
+        // Primera fila: Fecha y Temperatura
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             DetailCard(
-              icon: Icons.details,
-              title: 'Detalle',
-              value: detail,
+              icon: Icons.calendar_today,
+              title: 'Fecha',
+              value: date,
               backgroundColor: _greenLight,
               borderColor: _greenMedium,
               iconColor: _greenMedium,
@@ -176,9 +175,9 @@ class SampleCard extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             DetailCard(
-              icon: Icons.radar,
-              title: 'Radio Fijo',
-              value: fixedRadius,
+              icon: Icons.thermostat,
+              title: 'Temperatura',
+              value: temperature,
               backgroundColor: _blueLight,
               borderColor: _blueBorder,
               iconColor: _blueBorder,
@@ -189,14 +188,14 @@ class SampleCard extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         
-        // Segunda fila
+        // Segunda fila: Humedad y Precipitaciones
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             DetailCard(
-              icon: Icons.date_range,
-              title: 'Periodo de muestreo',
-              value: censusPeriod,
+              icon: Icons.water_drop,
+              title: 'Humedad',
+              value: humidity,
               backgroundColor: _blueLight,
               borderColor: _blueBorder,
               iconColor: _blueBorder,
@@ -205,9 +204,9 @@ class SampleCard extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             DetailCard(
-              icon: Icons.sensors_sharp,
-              title: 'Método de detección',
-              value: detection,
+              icon: Icons.cloud,
+              title: 'Precipitaciones',
+              value: precipitation,
               backgroundColor: _greenLight,
               borderColor: _greenMedium,
               iconColor: _greenMedium,
@@ -218,78 +217,50 @@ class SampleCard extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         
-        // Tercera fila
+        // Tercera fila: Cobertura de nubes y Luminosidad
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             DetailCard(
-              icon: Icons.speed,
-              title: 'Frecuencia',
-              value: frequency,
-              backgroundColor: Color.fromRGBO(67, 136, 95, 0.10),
+              icon: Icons.wb_cloudy,
+              title: 'Cobertura de nubes',
+              value: cloudCover,
+              backgroundColor: _cyanLight,
+              borderColor: _cyanBorder,
+              iconColor: _cyanBorder,
+              titleColor: _cyanBorder,
+              width: 164,
+            ),
+            const SizedBox(width: 10),
+            DetailCard(
+              icon: Icons.wb_sunny,
+              title: 'Luminosidad',
+              value: luminosity,
+              backgroundColor: _greenLight,
               borderColor: _greenMedium,
               iconColor: _greenMedium,
               titleColor: _greenMedium,
               width: 164,
             ),
-            const SizedBox(width: 10),
-            DetailCard(
-              icon: Icons.height,
-              title: 'Altura',
-              value: height,
-              backgroundColor: Color.fromRGBO(66, 120, 128, 0.10),
-              borderColor: _blueBorder,
-              iconColor: _blueBorder,
-              titleColor: _blueBorder,
-              width: 164,
-            ),
           ],
+        ),
+        const SizedBox(height: 10),
+        
+        // Cuarta fila: Condiciones generales (ocupa todo el ancho)
+        Align(
+          alignment: Alignment.centerLeft,
+          child: DetailCard(
+            icon: Icons.eco,
+            title: 'Condiciones generales',
+            value: generalConditions,
+            backgroundColor: _blueLight,
+            borderColor: _blueBorder,
+            iconColor: _blueBorder,
+            titleColor: _blueBorder,
+            width: 338,
+          ),
         ),
       ],
-    );
-  }
-
-  Widget _buildObservations() {
-    return Container(
-      width: 250,
-      height: 45,
-      decoration: BoxDecoration(
-        color: _greenLight,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: _greenMedium),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: Row(
-        children: [
-          const Icon(Icons.note, color: _greenMedium),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Observaciones',
-                  style: GoogleFonts.inter(
-                    color: _greenMedium,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
-                ),
-                Text(
-                  observations,
-                  style: GoogleFonts.inter(
-                    color: _grayText,
-                    fontSize: 12,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -297,11 +268,11 @@ class SampleCard extends StatelessWidget {
     return Center(
       child: CustomButton(
         text: speciesCount > 0
-            ? 'VER ESPECIES OBSERVADAS ($speciesCount)'
+            ? 'CLICK PARA VER ESPECIES OBSERVADAS'
             : 'NO HAY ESPECIES OBSERVADAS',
         onTap: speciesCount > 0 ? onViewSpecies : () {},
         width: 322,
-        fontSize: 15,
+        fontSize: 13,
       ),
     );
   }

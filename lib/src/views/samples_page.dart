@@ -149,7 +149,7 @@ class _SamplesPageState extends State<SamplesPage> {
     }
 
     // Calcular altura dinámica basada en número de muestras
-    final double contentHeight = 100 + (samples.length * 680.0);
+    final double contentHeight = 190 + (samples.length * 600.0);
 
     return SingleChildScrollView(
       child: BackgroundContainer(
@@ -168,7 +168,7 @@ class _SamplesPageState extends State<SamplesPage> {
             ...samples.asMap().entries.map((entry) {
               final index = entry.key;
               final sample = entry.value;
-              final displayNumber = (index + 1).toString(); // Empieza en 1
+              final displayNumber = (index + 1).toString();
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 20),
@@ -177,13 +177,13 @@ class _SamplesPageState extends State<SamplesPage> {
                   createdAt: sample.createdAt,
                   updatedAt: sample.updatedAt,
                   collectedBy: sample.collectedBy,
-                  detail: sample.detail,
-                  fixedRadius: sample.fixedRadiusText,
-                  censusPeriod: sample.censusPeriodText,
-                  detection: sample.detection,
-                  frequency: sample.frequency,
-                  height: sample.heightText,
-                  observations: sample.observations,
+                  date: sample.date,
+                  temperature: sample.temperatureText,
+                  humidity: sample.humidityText,
+                  precipitation: sample.precipitation,
+                  cloudCover: sample.cloudCoverText,
+                  luminosity: sample.luminosity,
+                  generalConditions: sample.generalConditions,
                   speciesCount: sample.speciesCount,
                   onViewSpecies: () {
                     // Obtener los UUIDs necesarios de los argumentos
@@ -192,7 +192,7 @@ class _SamplesPageState extends State<SamplesPage> {
 
                     Navigator.pushNamed(
                       context,
-                      'species_details',
+                      'species_3_1',
                       arguments: {
                         'projectUuid': args?['projectUuid'] ?? '',
                         'samplingPointUuid': args?['samplingPointUuid'] ?? '',
