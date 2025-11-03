@@ -24,7 +24,7 @@ class DetailCard extends StatelessWidget {
     required this.iconColor,
     required this.titleColor,
     this.valueColor = const Color(0xFF656565),
-    this.width = 148,
+    this.width = 153,
     this.height = 41,
   });
 

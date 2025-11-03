@@ -4,7 +4,7 @@ import 'package:clase_2108/src/views/project_details.dart';
 import 'package:clase_2108/src/views/samples_page.dart';
 import 'package:clase_2108/src/views/sampling_point_details.dart';
 import 'package:clase_2108/src/views/sampling_points.dart';
-import 'package:clase_2108/src/views/species_3_1.dart';
+import 'package:clase_2108/src/views/species.dart';
 import 'package:flutter/material.dart';
 
 Map<String, WidgetBuilder> getApplicationRoutes() {
@@ -16,6 +16,6 @@ Map<String, WidgetBuilder> getApplicationRoutes() {
     'sampling_points': (BuildContext context) => SamplingPoints(),
     'sampling_point_details': (BuildContext context) => SamplingPointDetails(),
     'samples_page': (BuildContext context) => SamplesPage(),
-    'species_3_1': (BuildContext context) => Species31()
+    'species': (BuildContext context) => Species()
   };
 }

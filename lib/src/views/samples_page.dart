@@ -192,7 +192,7 @@ class _SamplesPageState extends State<SamplesPage> {
 
                     Navigator.pushNamed(
                       context,
-                      'species_3_1',
+                      'species',
                       arguments: {
                         'projectUuid': args?['projectUuid'] ?? '',
                         'samplingPointUuid': args?['samplingPointUuid'] ?? '',
